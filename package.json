@@ -1,0 +1,26 @@
+{
+  "name": "puppeth",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanche/puppeth.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yanche/puppeth/issues"
+  },
+  "homepage": "https://github.com/yanche/puppeth#readme",
+  "dependencies": {
+    "@belongs/asyncutil": "0.0.1",
+    "@types/mongodb": "^3.1.12",
+    "@types/node": "^10.11.7",
+    "@types/web3": "^1.0.10",
+    "mongodb": "^3.1.8"
+  }
+}
