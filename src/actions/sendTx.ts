@@ -18,11 +18,11 @@ async function sendTxWithTag(tag: string): Promise<void> {
     if (!txArr.length) {
         return;
     }
-    
+
     const web3 = new Web3(config.web3Provider);
     await roll<config.Transaction, void>(txArr, async tx => {
         try {
-            await web3.eth.sendSignedTransaction(tx.txData);
+            await sendSignedTransaction(web3, tx.txData);
         } catch (err) {
             console.error(`failed to send tx, mongo _id: ${tx._id.toHexString()}`);
             console.error(err);
@@ -30,4 +30,13 @@ async function sendTxWithTag(tag: string): Promise<void> {
         }
         await txColl.updateAll({ _id: tx._id }, { $set: { done: 1 } });
     }, Math.min(10, txArr.length));
+}
+
+function sendSignedTransaction(web3: Web3, txData: string): Promise<void> {
+    return new Promise((res, rej) => {
+        // for some reason without callback, sendSignedTransaction does not work (hang forever)
+        web3.eth.sendSignedTransaction(txData, (err, result) => {
+            err ? rej(err) : res();
+        });
+    });
 }
