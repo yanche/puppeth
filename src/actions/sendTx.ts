@@ -2,7 +2,7 @@
 import Web3 = require("web3");
 import * as utility from "../utility";
 import * as config from "../config";
-import { roll } from "@belongs/asyncutil";
+import { roll, delay } from "@belongs/asyncutil";
 
 export function process(arg: string): Promise<void> {
     return sendTxWithTag(arg);
@@ -21,6 +21,8 @@ async function sendTxWithTag(tag: string): Promise<void> {
 
     const web3 = new Web3(config.web3Provider);
     await roll<config.Transaction, void>(txArr, async tx => {
+        await delay(config.sendTxFreqMs);
+
         try {
             await sendSignedTransaction(web3, tx.txData);
         } catch (err) {
@@ -29,7 +31,7 @@ async function sendTxWithTag(tag: string): Promise<void> {
             throw err;
         }
         await txColl.updateAll({ _id: tx._id }, { $set: { done: 1 } });
-    }, Math.min(10, txArr.length));
+    }, 1);
 }
 
 function sendSignedTransaction(web3: Web3, txData: string): Promise<void> {

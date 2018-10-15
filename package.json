@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/yanche/puppeth#readme",
   "dependencies": {
-    "@belongs/asyncutil": "0.0.1",
+    "@belongs/asyncutil": "0.0.3",
     "@types/config": "0.0.34",
     "@types/mongodb": "^3.1.12",
     "@types/node": "^10.11.7",

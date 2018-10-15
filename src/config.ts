@@ -70,3 +70,4 @@ switch (ethNetwork) {
 
 export const web3Provider: string = `https://${ethNetwork}.infura.io/v3/${infuraKey}`;
 export const chainId = _chainId;
+export const sendTxFreqMs = config.get<number>("sendTxFreqMs");
