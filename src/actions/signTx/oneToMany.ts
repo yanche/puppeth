@@ -2,14 +2,15 @@
 import Web3 = require("web3");
 import * as utility from "../../utility";
 import * as config from "../../config";
-import { parseEthUnit, validateNonEmptyString, validateNonNegInt, validatePosInt } from "./util";
+import { parseEthUnit, validateNonEmptyString, validateNonNegInt, validatePosInt, getAddressListOrThrow } from "./util";
 
 // validator
 export async function oneToMany(args: { [key: string]: any }): Promise<void> {
     const errors: string[] = [];
 
-    const wei = parseEthUnit("value", args["value"], errors);
-    const gasPriceWei = parseEthUnit("gasPrice", args["gasPrice"], errors);
+    const wei = parseEthUnit("value", args["value"], 0, errors);
+    // at least 1GWei gas price
+    const gasPriceWei = parseEthUnit("gasPrice", args["gasPrice"], config.weiPerGWei, errors);
     const startIndex: number = args["startIndex"];
     const recipientNumber: number = args["recipientNumber"];
     const privateKey: string = args["privateKey"];
@@ -43,13 +44,7 @@ async function _oneToMany(options: {
     recipientNumber: number;
     tag: string;
 }): Promise<void> {
-    const accountCollection = config.mongo.collections.accounts;
-    const db = new utility.mongo.DbClient(config.mongo.url);
-    const acctColl = db.getCollClient<config.Account>(accountCollection.name, accountCollection.fields);
-    const recipientAccounts = await acctColl.getAll({ index: { $gte: options.startIndex, $lt: options.startIndex + options.recipientNumber } }, { address: 1 });
-    if (recipientAccounts.length !== options.recipientNumber) {
-        throw new Error(`no enough accounts, found ${recipientAccounts.length} from index ${options.startIndex}`);
-    }
+    const recipientAccounts = await getAddressListOrThrow(options.startIndex, options.recipientNumber);
 
     const web3 = new Web3(config.web3Provider);
     const senderAddress = web3.eth.accounts.privateKeyToAccount(options.privateKey).address;
@@ -62,7 +57,7 @@ async function _oneToMany(options: {
     }
     const nonceStart = await web3.eth.getTransactionCount(senderAddress);
 
-    const txArr = await Promise.all(recipientAccounts.map(async ({ address }, index) => {
+    const txArr = await Promise.all(recipientAccounts.map(async (address, index) => {
         // this shall be synchronous call
         const nonce = index + nonceStart + 1;
         const tx = await web3.eth.accounts.signTransaction({
@@ -85,6 +80,6 @@ async function _oneToMany(options: {
         };
     }));
     const txCollection = config.mongo.collections.transactions;
-    const txColl = db.getCollClient<config.Transaction>(txCollection.name, txCollection.fields);
+    const txColl = config.db.getCollClient<config.Transaction>(txCollection.name, txCollection.fields);
     await txColl.bulkInsert(txArr);
 }

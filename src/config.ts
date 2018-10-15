@@ -1,5 +1,6 @@
 
 import * as config from "config";
+import * as utility from "./utility";
 import { ObjectID } from "mongodb";
 
 // mongodb document interface
@@ -24,7 +25,6 @@ export interface Transaction {
 }
 
 export const mongo = {
-    url: config.get<string>("mongoUrl"),
     collections: {
         accounts: {
             name: "acct",
@@ -73,3 +73,8 @@ export const chainId = _chainId;
 export const sendTxFreqMs = config.get<number>("sendTxFreqMs");
 
 export const sendEtherGasCost = 21000;
+export const weiPerEther = Math.pow(10, 18);
+export const weiPerGWei = Math.pow(10, 9);
+
+const mongoUrl = config.get<string>("mongoUrl");
+export const db = new utility.mongo.DbClient(mongoUrl);

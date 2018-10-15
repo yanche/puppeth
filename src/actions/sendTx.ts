@@ -14,8 +14,7 @@ export async function process(arg: string): Promise<void> {
 
 async function sendTxWithTag(tag: string): Promise<void> {
     const txCollection = config.mongo.collections.transactions;
-    const db = new utility.mongo.DbClient(config.mongo.url);
-    const txColl = db.getCollClient<config.Transaction>(txCollection.name, txCollection.fields);
+    const txColl = config.db.getCollClient<config.Transaction>(txCollection.name, txCollection.fields);
     const txArr = await txColl.getAll({ tag: tag }, { _id: 1, txData: 1 });
     console.info(`found ${txArr.length} transactions with tag: ${tag}`);
 

@@ -17,7 +17,7 @@ async function createAccounts(number: number): Promise<void> {
     console.info(`creating ${number} accounts.`);
 
     const accountCollection = config.mongo.collections.accounts;
-    const coll = new utility.mongo.DbClient(config.mongo.url).getCollClient<config.Account>(accountCollection.name, accountCollection.fields);
+    const coll = config.db.getCollClient<config.Account>(accountCollection.name, accountCollection.fields);
     // ASSUME accounts in mongodb has consecutive index starts from 0
     const acctNum = await coll.count();
     console.info(`now have ${acctNum} accounts, index starts from ${acctNum}`);

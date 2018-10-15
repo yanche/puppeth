@@ -1,29 +1,29 @@
 
-const unitEther = Math.pow(10, 18);
-const unitGwei = Math.pow(10, 9);
-export function parseEthUnit(name: string, input: any, errors: string[]): {
+import * as config from "../../config";
+
+export function parseEthUnit(name: string, input: string, minValue: number, errors: string[]): {
     valid: boolean;
     wei: number;
 } {
-    if (typeof name !== "string" || !name.trim().length) {
+    if (typeof input !== "string" || !input.trim().length) {
         return fail();
     }
-    name = name.trim();
+    input = input.trim();
 
     let numstr = "";
     let unit = 0;
-    if (name.slice(-3).toLowerCase() === "eth") {
-        numstr = name.slice(0, -3);
-        unit = unitEther;
-    } else if (name.slice(-4).toLowerCase() === "gwei") {
-        numstr = name.slice(0, -4);
-        unit = unitGwei;
-    } else if (name.slice(-3).toLowerCase() === "wei") {
-        numstr = name.slice(0, -3);
+    if (input.slice(-3).toLowerCase() === "eth") {
+        numstr = input.slice(0, -3);
+        unit = config.weiPerEther;
+    } else if (input.slice(-4).toLowerCase() === "gwei") {
+        numstr = input.slice(0, -4);
+        unit = config.weiPerGWei;
+    } else if (input.slice(-3).toLowerCase() === "wei") {
+        numstr = input.slice(0, -3);
         unit = 1;
     }
     const num = Number(numstr);
-    if (!unit || !Number.isSafeInteger(num) || num <= 0) {
+    if (!unit || !Number.isSafeInteger(num) || num < minValue) {
         return fail();
     }
 
@@ -33,7 +33,7 @@ export function parseEthUnit(name: string, input: any, errors: string[]): {
     };
 
     function fail() {
-        errors.push(`${name} must be non empty string like {NUM}GWei or {NUM}Wei or {Num}Eth`);
+        errors.push(`${name} must be non empty string like {NUM}GWei or {NUM}Wei or {Num}Eth, min: ${minValue}wei`);
         return {
             valid: false,
             wei: 0,
@@ -63,4 +63,16 @@ export function validateNonNegInt(name: string, input: any, errors: string[]): b
     } else {
         errors.push(`${name} must be non negative integer`);
     }
+}
+
+export async function getAddressListOrThrow(startIndex: number, count: number): Promise<string[]> {
+    const accountCollection = config.mongo.collections.accounts;
+    const acctColl = config.db.getCollClient<config.Account>(accountCollection.name, accountCollection.fields);
+    const accounts = await acctColl.getAll({ index: { $gte: startIndex, $lt: startIndex + count } }, { address: 1 });
+
+    if (accounts.length !== count) {
+        throw new Error(`no enough accounts, found ${accounts.length} from index ${startIndex}, while ${count} were asked`);
+    }
+
+    return accounts.map(a => a.address);
 }
