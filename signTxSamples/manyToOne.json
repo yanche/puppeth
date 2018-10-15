@@ -1,0 +1,9 @@
+{
+    "type": "oneToMany",
+    "value": "10GWei",
+    "gasPrice": "4GWei",
+    "privateKey": "your private key to sign the transaction",
+    "recipientStartIndex": 0,
+    "recipientNumber": 100,
+    "tag": "the tag to identify tx of same action"
+}
