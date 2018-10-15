@@ -15,6 +15,10 @@ async function sendTxWithTag(tag: string): Promise<void> {
     const txArr = await txColl.getAll({ tag: tag }, { _id: 1, txData: 1 });
     console.info(`found ${txArr.length} transactions with tag: ${tag}`);
 
+    if (!txArr.length) {
+        return;
+    }
+    
     const web3 = new Web3(config.web3Provider);
     await roll<config.Transaction, void>(txArr, async tx => {
         try {

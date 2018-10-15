@@ -19,7 +19,6 @@ interface CallArgs {
 }
 
 const sendEtherGasCost = 21000;
-const ethChainId = 1;
 
 async function oneToMany(options: CallArgs): Promise<void> {
     const accountCollection = config.mongo.collections.accounts;
@@ -31,15 +30,15 @@ async function oneToMany(options: CallArgs): Promise<void> {
     }
 
     const web3 = new Web3(config.web3Provider);
-    const address = web3.eth.accounts.privateKeyToAccount(options.privateKey).address;
-    console.log(`address: ${address}`);
-    const balance = await web3.eth.getBalance(address);
+    const senderAddress = web3.eth.accounts.privateKeyToAccount(options.privateKey).address;
+    console.log(`address: ${senderAddress}`);
+    const balance = await web3.eth.getBalance(senderAddress);
     console.log(`balance: ${balance}`);
     const cost = options.recipientNumber * (options.wei + options.gasPriceWei * sendEtherGasCost);
     if (balance < cost) {
         throw new Error(`insufficient balance, you need: ${cost}`);
     }
-    const nonceStart = await web3.eth.getTransactionCount(address);
+    const nonceStart = await web3.eth.getTransactionCount(senderAddress);
 
     const txArr = await Promise.all(recipientAccounts.map(async ({ address }, index) => {
         // this shall be synchronous call
@@ -50,11 +49,11 @@ async function oneToMany(options: CallArgs): Promise<void> {
             value: options.wei,
             gas: sendEtherGasCost,
             gasPrice: options.gasPriceWei,
-            chainId: ethChainId,
+            chainId: config.chainId,
         }, options.privateKey);
         return <config.Transaction>{
             txData: tx.rawTransaction,
-            from: address,
+            from: senderAddress,
             nonce: nonce,
             to: address,
             wei: options.wei,

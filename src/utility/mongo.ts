@@ -30,7 +30,7 @@ export class CollClient<T> {
     public async count(filter: Object = {}): Promise<number> {
         const col = await this._colhub.get();
         return new Promise<number>((res, rej) => {
-            col.count(filter, (err: Error, ct: number) => {
+            col.countDocuments(filter, (err: Error, ct: number) => {
                 err ? rej(err) : res(ct);
             });
         });
@@ -52,7 +52,7 @@ export class CollClient<T> {
             });
         });
     }
-    
+
     constructor(dbhub: Hub<mongodb.Db>, collname: string, fields: Object) {
         this._colhub = new Hub<mongodb.Collection>(() => dbhub.get().then(db => db.collection(collname)));
         this._fields = fields;
@@ -69,17 +69,10 @@ export class DbClient {
 
     constructor(connstr: string) {
         this._connstr = connstr;
-        this._dbhub = new Hub<mongodb.Db>(() => {
-            return new Promise<mongodb.Db>((res, rej) => {
-                mongodb.connect(connstr, (err: Error, client: mongodb.MongoClient) => {
-                    if (err) {
-                        rej(err);
-                    } else {
-                        res(client.db(dbNameFromUrl(connstr)));
-                    }
-                });
-            });
-        })
+        this._dbhub = new Hub<mongodb.Db>(async () => {
+            const client = await mongodb.connect(connstr, { useNewUrlParser: true });
+            return client.db(dbNameFromUrl(connstr));
+        });
     }
 }
 

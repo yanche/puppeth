@@ -52,4 +52,21 @@ export const mongo = {
     }
 };
 
-export const web3Provider: string = config.get<string>("web3Provider");
+const infuraKey = config.get<string>("infuraKey");
+const ethNetwork = config.get<string>("ethNetwork");
+let _chainId = 0;
+switch (ethNetwork) {
+    case "mainnet": {
+        _chainId = 1;
+        break;
+    }
+    case "ropsten": {
+        _chainId = 3;
+        break;
+    }
+    default:
+        throw new Error(`unknown ETH network: ${ethNetwork}, valid values: mainnet, ropsten`);
+}
+
+export const web3Provider: string = `https://${ethNetwork}.infura.io/v3/${infuraKey}`;
+export const chainId = _chainId;
