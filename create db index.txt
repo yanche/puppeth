@@ -1,0 +1,2 @@
+db.acct.createIndex({ index: 1}, { unique: true });
+db.tx.createIndex({ tag: 1});
