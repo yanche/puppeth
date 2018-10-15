@@ -8,7 +8,9 @@ actionMap.set("createAcct", createAcct.process);
 actionMap.set("signTx", signTx.process);
 actionMap.set("sendTx", sendTx.process);
 
-// node ./index.js createAcct {number}
+// node ./src/index.js createAcct {number}
+// node ./src/index.js sendTx {tag}
+// node ./src/index.js signTx {path-to-json}
 
 async function processAction() {
     const actionType = process.argv[2];
@@ -21,6 +23,7 @@ async function processAction() {
         throw new Error(`action not found: ${actionType}`);
     }
 }
+
 processAction()
     .then(() => {
         console.info("done");

@@ -4,8 +4,12 @@ import * as utility from "../utility";
 import * as config from "../config";
 import { roll, delay } from "@belongs/asyncutil";
 
-export function process(arg: string): Promise<void> {
-    return sendTxWithTag(arg);
+export async function process(arg: string): Promise<void> {
+    if (typeof arg !== "string" || !arg.trim().length) {
+        throw new Error(`input must be a non empty string: ${arg}`);
+    }
+
+    await sendTxWithTag(arg.trim());
 }
 
 async function sendTxWithTag(tag: string): Promise<void> {
