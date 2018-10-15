@@ -1,6 +1,5 @@
 
 import Web3 = require("web3");
-import * as utility from "../utility";
 import * as config from "../config";
 
 export async function process(arg: string): Promise<void> {
@@ -16,10 +15,8 @@ export async function process(arg: string): Promise<void> {
 async function createAccounts(number: number): Promise<void> {
     console.info(`creating ${number} accounts.`);
 
-    const accountCollection = config.mongo.collections.accounts;
-    const coll = config.db.getCollClient<config.Account>(accountCollection.name, accountCollection.fields);
     // ASSUME accounts in mongodb has consecutive index starts from 0
-    const acctNum = await coll.count();
+    const acctNum = await config.acctColl.count();
     console.info(`now have ${acctNum} accounts, index starts from ${acctNum}`);
 
     const web3 = new Web3();
@@ -30,10 +27,11 @@ async function createAccounts(number: number): Promise<void> {
             privateKey: privateKey,
             address: address,
             index: acctNum + i,
+            nextNonce: 0,
         };
     }
 
-    await coll.bulkInsert(arr);
-    const acctNum2 = await coll.count();
+    await config.acctColl.bulkInsert(arr);
+    const acctNum2 = await config.acctColl.count();
     console.info(`now have ${acctNum2} accounts.`);
 }

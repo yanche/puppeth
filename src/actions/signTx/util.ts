@@ -65,14 +65,12 @@ export function validateNonNegInt(name: string, input: any, errors: string[]): b
     }
 }
 
-export async function getAddressListOrThrow(startIndex: number, count: number): Promise<string[]> {
-    const accountCollection = config.mongo.collections.accounts;
-    const acctColl = config.db.getCollClient<config.Account>(accountCollection.name, accountCollection.fields);
-    const accounts = await acctColl.getAll({ index: { $gte: startIndex, $lt: startIndex + count } }, { address: 1 });
+export async function getAddressListOrThrow(startIndex: number, count: number): Promise<config.Account[]> {
+    const accounts = await config.acctColl.getAll({ index: { $gte: startIndex, $lt: startIndex + count } });
 
     if (accounts.length !== count) {
         throw new Error(`no enough accounts, found ${accounts.length} from index ${startIndex}, while ${count} were asked`);
     }
 
-    return accounts.map(a => a.address);
+    return accounts;
 }

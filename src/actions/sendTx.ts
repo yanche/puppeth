@@ -1,6 +1,5 @@
 
 import Web3 = require("web3");
-import * as utility from "../utility";
 import * as config from "../config";
 import { roll, delay } from "@belongs/asyncutil";
 
@@ -13,9 +12,7 @@ export async function process(arg: string): Promise<void> {
 }
 
 async function sendTxWithTag(tag: string): Promise<void> {
-    const txCollection = config.mongo.collections.transactions;
-    const txColl = config.db.getCollClient<config.Transaction>(txCollection.name, txCollection.fields);
-    const txArr = await txColl.getAll({ tag: tag }, { _id: 1, txData: 1 });
+    const txArr = await config.txColl.getAll({ tag: tag }, { _id: 1, txData: 1 });
     console.info(`found ${txArr.length} transactions with tag: ${tag}`);
 
     if (!txArr.length) {
@@ -23,7 +20,7 @@ async function sendTxWithTag(tag: string): Promise<void> {
     }
 
     const web3 = new Web3(config.web3Provider);
-    await roll<config.Transaction, void>(txArr, async tx => {
+    await roll(txArr, async tx => {
         await delay(config.sendTxFreqMs);
 
         try {
@@ -33,7 +30,7 @@ async function sendTxWithTag(tag: string): Promise<void> {
             console.error(err);
             throw err;
         }
-        await txColl.updateAll({ _id: tx._id }, { $set: { done: 1 } });
+        await config.txColl.updateAll({ _id: tx._id }, { $set: { done: 1 } });
     }, 1);
 }
 

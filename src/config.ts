@@ -9,6 +9,7 @@ export interface Account {
     index?: number;
     privateKey?: string;
     address?: string;
+    nextNonce?: number;
 }
 
 // mongodb document interface
@@ -33,6 +34,7 @@ export const mongo = {
                 index: 1,
                 privateKey: 1,
                 address: 1,
+                nextNonce: 1,
             },
         },
         transactions: {
@@ -77,4 +79,6 @@ export const weiPerEther = Math.pow(10, 18);
 export const weiPerGWei = Math.pow(10, 9);
 
 const mongoUrl = config.get<string>("mongoUrl");
-export const db = new utility.mongo.DbClient(mongoUrl);
+const db = new utility.mongo.DbClient(mongoUrl);
+export const txColl = db.getCollClient<Transaction>(mongo.collections.transactions.name, mongo.collections.transactions.fields);
+export const acctColl = db.getCollClient<Account>(mongo.collections.accounts.name, mongo.collections.accounts.fields);

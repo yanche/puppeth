@@ -1,9 +1,11 @@
 
 import * as fs from "fs";
 import { oneToMany } from "./oneToMany";
+import { manyToOne } from "./manyToOne";
 
 const processMap = new Map<string, (args: { [key: string]: any }) => Promise<void>>();
 processMap.set("oneToMany", oneToMany);
+processMap.set("manyToOne", manyToOne);
 
 export async function process(arg: string): Promise<void> {
     const content = fs.readFileSync(arg).toString("utf-8");
