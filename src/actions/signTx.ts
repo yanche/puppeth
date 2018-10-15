@@ -2,18 +2,26 @@
 import Web3 = require("web3");
 import * as utility from "../utility";
 import * as config from "../config";
+import * as fs from "fs";
 
-const sendEtherGasCost = 21000;
-const ethChainId = 1;
+export async function process(arg: string): Promise<void> {
+    await oneToMany(JSON.parse(fs.readFileSync(arg).toString("utf-8")));
+}
 
-export async function oneToMany(options: {
+interface CallArgs {
+    // type: string;
     wei: number;
     gasPriceWei: number;
     privateKey: string;
     startIndex: number;
     recipientNumber: number;
     tag: string;
-}): Promise<void> {
+}
+
+const sendEtherGasCost = 21000;
+const ethChainId = 1;
+
+async function oneToMany(options: CallArgs): Promise<void> {
     const accountCollection = config.mongo.collections.accounts;
     const db = new utility.mongo.DbClient(config.mongo.url);
     const acctColl = db.getCollClient<config.Account>(accountCollection.name, accountCollection.fields);

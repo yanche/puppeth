@@ -4,7 +4,11 @@ import * as utility from "../utility";
 import * as config from "../config";
 import { roll } from "@belongs/asyncutil";
 
-export async function sendTxWithTag(tag: string): Promise<void> {
+export function process(arg: string): Promise<void> {
+    return sendTxWithTag(arg);
+}
+
+async function sendTxWithTag(tag: string): Promise<void> {
     const txCollection = config.mongo.collections.transactions;
     const db = new utility.mongo.DbClient(config.mongo.url);
     const txColl = db.getCollClient<config.Transaction>(txCollection.name, txCollection.fields);
