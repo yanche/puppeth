@@ -53,6 +53,15 @@ export class CollClient<T> {
         });
     }
 
+    public async createOne(item: T): Promise<mongodb.ObjectID> {
+        const col = await this._colhub.get();
+        return new Promise<mongodb.ObjectID>((res, rej) => {
+            col.insertOne(item, (err: Error, ret: mongodb.InsertOneWriteOpResult) => {
+                err ? rej(err) : res(ret.insertedId);
+            });
+        });
+    }
+
     constructor(dbhub: Hub<mongodb.Db>, collname: string, fields: Object) {
         this._colhub = new Hub<mongodb.Collection>(() => dbhub.get().then(db => db.collection(collname)));
         this._fields = fields;

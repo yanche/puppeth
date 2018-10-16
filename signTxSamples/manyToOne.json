@@ -1,9 +1,9 @@
 {
-    "type": "oneToMany",
-    "value": "10GWei",
+    "type": "manyToOne",
+    "value": "1eth",
     "gasPrice": "4GWei",
-    "privateKey": "your private key to sign the transaction",
-    "recipientStartIndex": 0,
-    "recipientNumber": 100,
+    "address": "the address as recipient of these tx",
+    "senderStartIndex": 0,
+    "senderNumber": 100,
     "tag": "the tag to identify tx of same action"
 }

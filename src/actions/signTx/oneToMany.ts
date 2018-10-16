@@ -58,7 +58,7 @@ async function _oneToMany(options: {
 
     const txArr = await Promise.all(recipientAccounts.map(async (account, index) => {
         // this shall be synchronous call
-        const nonce = index + nonceStart + 1;
+        const nonce = index + nonceStart;
         const tx = await web3.eth.accounts.signTransaction({
             nonce: nonce,
             to: account.address,
