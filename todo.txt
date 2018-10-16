@@ -1,0 +1,9 @@
+100% offline operation except send tx
+
+signtx, save to file
+
+sendtx, from file
+
+check tx status, from db/file
+
+signtx with data (to contract)
