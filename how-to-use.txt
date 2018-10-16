@@ -1,0 +1,14 @@
+
+CREATE ACCOUNTS
+this command will create ethereum accounts (private keys) using web3 api and store them in mongodb (highly suggest offline local db)
+> node ./src/index.js createAcct {number}
+
+SIGN TX
+this command signs tx, several different types are supported (1-*, *-1, 1-1), use json file to pass parameters, check ./signTxSamples/*.json for json format
+signed tx will be stored in mongodb with tag, use this tag to identify a set of tx and use as parameter in send tx command
+node ./src/index.js signTx {path-to-json}
+
+SEND TX
+this command retrieve signed tx from mongodb by provided tag and send them to public network via web3 & infura
+> node ./src/index.js sendTx {tag}
+
