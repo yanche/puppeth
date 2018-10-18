@@ -1,6 +1,4 @@
 
-import Web3 = require("web3");
-import { roll } from "@belongs/asyncutil";
 import * as config from "../../config";
 import { wei, nonEmptyString, nonNegInt, posInt, getAddressListOrThrow, signTxOffline } from "./util";
 
@@ -25,6 +23,7 @@ export type InputType = {
 // CORE processor
 // NO input validation
 export async function signTx(options: InputType): Promise<void> {
+    console.log("running in offline mode");
     console.log(`to address: ${options.address}`);
 
     const senderAccounts = (await getAddressListOrThrow(options.senderStartIndex, options.senderNumber)).map((acct, i) => ({ acct: acct, index: i }));

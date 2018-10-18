@@ -4,5 +4,6 @@
     "gasPrice": "4GWei",
     "recipientAddress": "the address as recipient of this tx",
     "privateKey": "your private key to sign the transaction",
-    "tag": "the tag to identify tx of same action"
+    "tag": "the tag to identify tx of same action",
+    "nonce": 101
 }

@@ -5,5 +5,6 @@
     "privateKey": "your private key to sign the transaction",
     "recipientStartIndex": 0,
     "recipientNumber": 100,
-    "tag": "the tag to identify tx of same action"
+    "tag": "the tag to identify tx of same action",
+    "nonceStart": 100
 }

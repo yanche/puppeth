@@ -2,12 +2,13 @@
 import * as config from "../../config";
 import Web3 = require("web3");
 
-type InputFieldType = "nonEmptyString" | "nonNegInt" | "posInt" | "wei";
+type InputFieldType = "nonEmptyString" | "nonNegInt" | "posInt" | "wei" | "optionalNonNegInt";
 
 export const wei: InputFieldType = "wei";
 export const nonEmptyString: InputFieldType = "nonEmptyString";
 export const nonNegInt: InputFieldType = "nonNegInt";
 export const posInt: InputFieldType = "posInt";
+export const optionalNonNegInt: InputFieldType = "optionalNonNegInt";
 
 export function preProcessInput<T>(input: { [key: string]: any }, shape: { [K in keyof T]: InputFieldType }): T {
     const errors: string[] = [];
@@ -22,7 +23,7 @@ export function preProcessInput<T>(input: { [key: string]: any }, shape: { [K in
                 break;
             }
             case "nonNegInt": {
-                validateNonNegInt(name, inputVal, errors);
+                validateNonNegInt(name, inputVal, false, errors);
                 result[name] = inputVal;
                 break;
             }
@@ -35,6 +36,13 @@ export function preProcessInput<T>(input: { [key: string]: any }, shape: { [K in
                 result[name] = parseEthUnit(name, inputVal, errors);
                 break;
             }
+            case "optionalNonNegInt": {
+                validateNonNegInt(name, inputVal, true, errors);
+                result[name] = inputVal;
+                break;
+            }
+            default:
+                throw new Error(`unknown shape field type: ${name}`);
         }
     });
 
@@ -91,9 +99,9 @@ function validatePosInt(name: string, input: any, errors: string[]): void {
     }
 }
 
-function validateNonNegInt(name: string, input: any, errors: string[]): void {
-    if (typeof input !== "number" || !Number.isInteger(input) || input < 0) {
-        errors.push(`${name} must be non negative integer`);
+function validateNonNegInt(name: string, input: any, optional: boolean, errors: string[]): void {
+    if ((typeof input !== "number" || !Number.isInteger(input) || input < 0) && (!optional || input !== undefined)) {
+        errors.push(`${name} must be non negative integer${optional ? " or blank" : ""} `);
     }
 }
 
