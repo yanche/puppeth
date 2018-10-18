@@ -1,7 +1,7 @@
 
 import Web3 = require("web3");
 import * as config from "../../config";
-import { wei, nonEmptyString } from "./util";
+import { wei, nonEmptyString, signTxOffline } from "./util";
 
 export const shape = {
     value: wei,
@@ -34,23 +34,14 @@ export async function signTx(options: InputType): Promise<void> {
 
     const nonce = await web3.eth.getTransactionCount(senderAddress);
     // this shall be synchronous call
-    const tx = await web3.eth.accounts.signTransaction({
+    const tx = await signTxOffline({
         nonce: nonce,
-        to: options.recipientAddress,
+        address: options.recipientAddress,
         value: options.value,
-        gas: config.sendEtherGasCost,
         gasPrice: options.gasPrice,
-        chainId: config.chainId,
-    }, options.privateKey);
-
-    await config.txColl.createOne({
-        txData: tx.rawTransaction,
-        from: senderAddress,
-        nonce: nonce,
-        to: options.recipientAddress,
-        wei: options.value,
-        gas: config.sendEtherGasCost,
-        gasPriceWei: options.gasPrice,
+        privateKey: options.privateKey,
         tag: options.tag,
     });
+
+    await config.txColl.createOne(tx);
 }

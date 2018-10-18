@@ -1,5 +1,6 @@
 
 import * as config from "../../config";
+import Web3 = require("web3");
 
 type InputFieldType = "nonEmptyString" | "nonNegInt" | "posInt" | "wei";
 
@@ -104,4 +105,36 @@ export async function getAddressListOrThrow(startIndex: number, count: number): 
     }
 
     return accounts;
+}
+
+// NO input validation
+export async function signTxOffline(options: {
+    privateKey: string;
+    nonce: number;
+    address: string;
+    value: number;
+    gas?: number;
+    gasPrice: number;
+    tag: string;
+}): Promise<config.Transaction> {
+    const gas = options.gas || config.sendEtherGasCost;
+    const web3 = new Web3();
+    const tx = await web3.eth.accounts.signTransaction({
+        nonce: options.nonce,
+        to: options.address,
+        value: options.value,
+        gas: gas,
+        gasPrice: options.gasPrice,
+        chainId: config.chainId,
+    }, options.privateKey);
+    return {
+        txData: tx.rawTransaction,
+        from: web3.eth.accounts.privateKeyToAccount(options.privateKey).address,
+        nonce: options.nonce,
+        to: options.address,
+        value: options.value,
+        gas: gas,
+        gasPrice: options.gasPrice,
+        tag: options.tag,
+    };
 }

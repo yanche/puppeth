@@ -19,9 +19,9 @@ export interface Transaction {
     tag?: string;
     from?: string;
     to?: string;
-    wei?: number;
+    value?: number;
     gas?: number;
-    gasPriceWei?: number;
+    gasPrice?: number;
     nonce?: number;
 }
 
@@ -45,9 +45,9 @@ export const mongo = {
                 tag: 1,
                 from: 1,
                 to: 1,
-                wei: 1,
+                value: 1,
                 gas: 1,
-                gasPriceWei: 1,
+                gasPrice: 1,
                 nonce: 1,
             }
         },
