@@ -1,13 +1,9 @@
 
 import * as fs from "fs";
-import { oneToMany } from "./oneToMany";
-import { manyToOne } from "./manyToOne";
-import { oneToOne } from "./oneToOne";
-
-const processMap = new Map<string, (args: { [key: string]: any }) => Promise<void>>();
-processMap.set("oneToMany", oneToMany);
-processMap.set("manyToOne", manyToOne);
-processMap.set("oneToOne", oneToOne);
+import * as oneToMany from "./oneToMany";
+import * as manyToOne from "./manyToOne";
+import * as oneToOne from "./oneToOne";
+import { preProcessInput } from "./util";
 
 export async function process(arg: string): Promise<void> {
     const content = fs.readFileSync(arg).toString("utf-8");
@@ -23,10 +19,17 @@ export async function process(arg: string): Promise<void> {
         throw new Error(`type field must be a non empty string: ${type}`);
     }
 
-    const handler = processMap.get(type.trim());
-    if (!handler) {
-        throw new Error(`unknown type: ${type}`);
-    } else {
-        await handler(obj);
+    switch (type.trim()) {
+        case "oneToMany": {
+            return oneToMany.signTx(preProcessInput<oneToMany.InputType>(obj, oneToMany.shape));
+        }
+        case "manyToOne": {
+            return manyToOne.signTx(preProcessInput<manyToOne.InputType>(obj, manyToOne.shape));
+        }
+        case "oneToOne": {
+            return oneToOne.signTx(preProcessInput<oneToOne.InputType>(obj, oneToOne.shape));
+        }
+        default:
+            throw new Error(`unknown type: ${type}`);
     }
 }

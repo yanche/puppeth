@@ -2,48 +2,29 @@
 import Web3 = require("web3");
 import { roll } from "@belongs/asyncutil";
 import * as config from "../../config";
-import { parseEthUnit, validateNonEmptyString, validateNonNegInt, validatePosInt, getAddressListOrThrow } from "./util";
+import { wei, nonEmptyString, nonNegInt, posInt, getAddressListOrThrow } from "./util";
 
-// validator
-export async function manyToOne(args: { [key: string]: any }): Promise<void> {
-    const errors: string[] = [];
-
-    const wei = parseEthUnit("value", args["value"], 0, errors);
-    // at least 1GWei gas price
-    const gasPriceWei = parseEthUnit("gasPrice", args["gasPrice"], config.weiPerGWei, errors);
-    const senderStartIndex: number = args["senderStartIndex"];
-    const senderNumber: number = args["senderNumber"];
-    const address: string = args["address"];
-    const tag: string = args["tag"];
-
-    if (!wei.valid ||
-        !gasPriceWei.valid ||
-        !validateNonNegInt("senderStartIndex", senderStartIndex, errors) ||
-        !validatePosInt("senderNumber", senderNumber, errors) ||
-        !validateNonEmptyString("address", address, errors) ||
-        !validateNonEmptyString("tag", tag, errors)) {
-        throw new Error(errors.join("\n"));
-    }
-
-    await _manyToOne({
-        wei: wei.wei,
-        gasPriceWei: gasPriceWei.wei,
-        address: address.trim(),
-        senderStartIndex,
-        senderNumber,
-        tag: tag.trim(),
-    });
+export const shape = {
+    value: wei,
+    gasPrice: wei,
+    address: nonEmptyString,
+    senderStartIndex: nonNegInt,
+    senderNumber: posInt,
+    tag: nonEmptyString,
 }
 
-// CORE processor
-async function _manyToOne(options: {
-    wei: number;
-    gasPriceWei: number;
+export type InputType = {
+    value: number;
+    gasPrice: number;
     address: string;
     senderStartIndex: number;
     senderNumber: number;
     tag: string;
-}): Promise<void> {
+}
+
+// CORE processor
+// NO input validation
+export async function signTx(options: InputType): Promise<void> {
     console.log(`to address: ${options.address}`);
 
     const senderAccounts = (await getAddressListOrThrow(options.senderStartIndex, options.senderNumber)).map((acct, i) => ({ acct: acct, index: i }));
@@ -56,9 +37,9 @@ async function _manyToOne(options: {
         const tx = await web3.eth.accounts.signTransaction({
             nonce: entry.acct.nextNonce,
             to: options.address,
-            value: options.wei,
+            value: options.value,
             gas: config.sendEtherGasCost,
-            gasPrice: options.gasPriceWei,
+            gasPrice: options.gasPrice,
             chainId: config.chainId,
         }, entry.acct.privateKey);
 
@@ -67,9 +48,9 @@ async function _manyToOne(options: {
             from: entry.acct.address,
             nonce: entry.acct.nextNonce,
             to: options.address,
-            wei: options.wei,
+            wei: options.value,
             gas: config.sendEtherGasCost,
-            gasPriceWei: options.gasPriceWei,
+            gasPriceWei: options.gasPrice,
             tag: options.tag,
         };
 

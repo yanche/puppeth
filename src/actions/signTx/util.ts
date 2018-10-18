@@ -1,10 +1,50 @@
 
 import * as config from "../../config";
 
-export function parseEthUnit(name: string, input: string, minValue: number, errors: string[]): {
-    valid: boolean;
-    wei: number;
-} {
+type InputFieldType = "nonEmptyString" | "nonNegInt" | "posInt" | "wei";
+
+export const wei: InputFieldType = "wei";
+export const nonEmptyString: InputFieldType = "nonEmptyString";
+export const nonNegInt: InputFieldType = "nonNegInt";
+export const posInt: InputFieldType = "posInt";
+
+export function preProcessInput<T>(input: { [key: string]: any }, shape: { [K in keyof T]: InputFieldType }): T {
+    const errors: string[] = [];
+    const result: { [k: string]: number | string } = {};
+
+    Object.keys(shape).forEach(name => {
+        const inputVal = (<any>input)[name];
+        const type: InputFieldType = (<any>shape)[name];
+        switch (type) {
+            case "nonEmptyString": {
+                result[name] = parseNonEmptyString(name, inputVal, errors);
+                break;
+            }
+            case "nonNegInt": {
+                validateNonNegInt(name, inputVal, errors);
+                result[name] = inputVal;
+                break;
+            }
+            case "posInt": {
+                validatePosInt(name, inputVal, errors);
+                result[name] = inputVal;
+                break;
+            }
+            case "wei": {
+                result[name] = parseEthUnit(name, inputVal, errors);
+                break;
+            }
+        }
+    });
+
+    if (errors.length > 0) {
+        throw new Error(errors.join("\n"));
+    }
+
+    return <any>result;
+}
+
+function parseEthUnit(name: string, input: string, errors: string[]): number {
     if (typeof input !== "string" || !input.trim().length) {
         return fail();
     }
@@ -23,44 +63,35 @@ export function parseEthUnit(name: string, input: string, minValue: number, erro
         unit = 1;
     }
     const num = Number(numstr);
-    if (!unit || !Number.isSafeInteger(num) || num < minValue) {
+    if (!unit || !Number.isSafeInteger(num) || num < config.weiPerGWei) {
         return fail();
     }
 
-    return {
-        valid: true,
-        wei: num * unit,
-    };
+    return num * unit;
 
     function fail() {
-        errors.push(`${name} must be non empty string like {NUM}GWei or {NUM}Wei or {Num}Eth, min: ${minValue}wei`);
-        return {
-            valid: false,
-            wei: 0,
-        };
+        errors.push(`${name} must be non empty string like {NUM}GWei or {NUM}Wei or {Num}Eth, min: ${config.weiPerGWei}wei`);
+        return 0;
     }
 }
 
-export function validateNonEmptyString(name: string, input: any, errors: string[]): boolean {
-    if (typeof input === "string" && input.trim().length > 0) {
-        return true;
-    } else {
+function parseNonEmptyString(name: string, input: any, errors: string[]): string {
+    if (typeof input !== "string" || input.trim().length === 0) {
         errors.push(`${name} must be non empty string`);
+        return "";
+    } else {
+        return input.trim();
     }
 }
 
-export function validatePosInt(name: string, input: any, errors: string[]): boolean {
-    if (typeof input === "number" && Number.isInteger(input) && input > 0) {
-        return true;
-    } else {
+function validatePosInt(name: string, input: any, errors: string[]): void {
+    if (typeof input !== "number" || !Number.isInteger(input) || input === 0) {
         errors.push(`${name} must be positive integer`);
     }
 }
 
-export function validateNonNegInt(name: string, input: any, errors: string[]): boolean {
-    if (typeof input === "number" && Number.isInteger(input) && input >= 0) {
-        return true;
-    } else {
+function validateNonNegInt(name: string, input: any, errors: string[]): void {
+    if (typeof input !== "number" || !Number.isInteger(input) || input < 0) {
         errors.push(`${name} must be non negative integer`);
     }
 }
