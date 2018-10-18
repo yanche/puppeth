@@ -5,7 +5,7 @@ import { roll, delay } from "@belongs/asyncutil";
 
 export async function process(arg: string): Promise<void> {
     if (typeof arg !== "string" || !arg.trim().length) {
-        throw new Error(`input must be a non empty string: ${arg}`);
+        throw new Error(`input as tag must be a non empty string: ${arg}`);
     }
 
     await sendTxWithTag(arg.trim());

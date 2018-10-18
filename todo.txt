@@ -1,9 +1,11 @@
-100% offline operation except send tx
+# 100% offline operation except send tx
 
-signtx, save to file
+# signtx, save to file
 
 sendtx, from file
 
 check tx status, from db/file
+
+check account status, from db
 
 signtx with data (to contract)

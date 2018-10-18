@@ -2,11 +2,13 @@
 import * as createAcct from "./actions/createAcct";
 import * as signTx from "./actions/signTx";
 import * as sendTx from "./actions/sendTx";
+import * as extractTx from "./actions/extractTx";
 
 const actionMap = new Map<string, (arg: string) => Promise<any>>();
 actionMap.set("createAcct", createAcct.process);
 actionMap.set("signTx", signTx.process);
 actionMap.set("sendTx", sendTx.process);
+actionMap.set("extractTx", extractTx.process);
 
 // node ./src/index.js createAcct {number}
 // node ./src/index.js sendTx {tag}
@@ -20,7 +22,7 @@ async function processAction() {
     if (handler) {
         await handler(actionArg);
     } else {
-        throw new Error(`action not found: ${actionType}`);
+        throw new Error(`action not supported: ${actionType}`);
     }
 }
 
