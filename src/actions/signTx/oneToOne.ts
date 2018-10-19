@@ -1,11 +1,11 @@
 
 import Web3 = require("web3");
 import * as config from "../../config";
-import { wei, nonEmptyString, signTxOffline, optionalNonNegInt } from "./util";
+import { nonEmptyString, signTxOffline, optionalNonNegInt, ethValue, gasPrice } from "./util";
 
 export const shape = {
-    value: wei,
-    gasPrice: wei,
+    value: ethValue,
+    gasPrice: gasPrice,
     privateKey: nonEmptyString,
     recipientAddress: nonEmptyString,
     tag: nonEmptyString,

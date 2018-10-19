@@ -15,3 +15,8 @@ export function getPipedString(): Promise<string> {
             .on("error", rej);
     });
 }
+
+// return first and last 6 char, concat with ...
+export function shortenMsg(msg: string): string {
+    return msg.length > 12 ? `${msg.slice(0, 6)}...${msg.slice(-6)}` : msg;
+}

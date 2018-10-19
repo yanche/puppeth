@@ -1,10 +1,10 @@
 
 import * as config from "../../config";
-import { wei, nonEmptyString, nonNegInt, posInt, getAddressListOrThrow, signTxOffline } from "./util";
+import { nonEmptyString, nonNegInt, posInt, getAddressListOrThrow, signTxOffline, ethValue, gasPrice } from "./util";
 
 export const shape = {
-    value: wei,
-    gasPrice: wei,
+    value: ethValue,
+    gasPrice: gasPrice,
     address: nonEmptyString,
     senderStartIndex: nonNegInt,
     senderNumber: posInt,

@@ -2,9 +2,10 @@
 import * as config from "../../config";
 import Web3 = require("web3");
 
-type InputFieldType = "nonEmptyString" | "nonNegInt" | "posInt" | "wei" | "optionalNonNegInt";
+type InputFieldType = "nonEmptyString" | "nonNegInt" | "posInt" | "ethValue" | "gasPrice" | "optionalNonNegInt";
 
-export const wei: InputFieldType = "wei";
+export const ethValue: InputFieldType = "ethValue";
+export const gasPrice: InputFieldType = "gasPrice";
 export const nonEmptyString: InputFieldType = "nonEmptyString";
 export const nonNegInt: InputFieldType = "nonNegInt";
 export const posInt: InputFieldType = "posInt";
@@ -32,8 +33,12 @@ export function preProcessInput<T>(input: { [key: string]: any }, shape: { [K in
                 result[name] = inputVal;
                 break;
             }
-            case "wei": {
-                result[name] = parseEthUnit(name, inputVal, errors);
+            case "gasPrice": {
+                result[name] = parseEthUnit(name, inputVal, config.weiPerGWei, errors);
+                break;
+            }
+            case "ethValue": {
+                result[name] = parseEthUnit(name, inputVal, 0, errors);
                 break;
             }
             case "optionalNonNegInt": {
@@ -53,7 +58,7 @@ export function preProcessInput<T>(input: { [key: string]: any }, shape: { [K in
     return <any>result;
 }
 
-function parseEthUnit(name: string, input: string, errors: string[]): number {
+function parseEthUnit(name: string, input: string, min: number, errors: string[]): number {
     if (typeof input !== "string" || !input.trim().length) {
         return fail();
     }
@@ -71,15 +76,15 @@ function parseEthUnit(name: string, input: string, errors: string[]): number {
         numstr = input.slice(0, -3);
         unit = 1;
     }
-    const num = Number(numstr);
-    if (!unit || !Number.isSafeInteger(num) || num < config.weiPerGWei) {
+    const num = unit * Number(numstr);
+    if (!Number.isSafeInteger(num) || num < min) {
         return fail();
     }
 
-    return num * unit;
+    return num;
 
     function fail() {
-        errors.push(`${name} must be non empty string like {NUM}GWei or {NUM}Wei or {Num}Eth, min: ${config.weiPerGWei}wei`);
+        errors.push(`${name} must be non empty string like {NUM}GWei or {NUM}Wei or {Num}Eth, min: ${min}wei`);
         return 0;
     }
 }

@@ -23,7 +23,7 @@ export interface Transaction {
     gas?: number;
     gasPrice?: number;
     nonce?: number;
-    done?: boolean;
+    txHash?: boolean;
 }
 
 export const mongo = {
@@ -50,7 +50,7 @@ export const mongo = {
                 gas: 1,
                 gasPrice: 1,
                 nonce: 1,
-                done: 1,
+                txHash: 1,
             }
         },
     }

@@ -28,7 +28,6 @@ async function processAction() {
 
 processAction()
     .then(() => {
-        console.info("done");
         return 0;
     }, err => {
         console.error(err);
