@@ -5,7 +5,7 @@ import * as manyToOne from "./manyToOne";
 import * as oneToOne from "./oneToOne";
 import { preProcessInput } from "./util";
 
-export async function process(arg: string): Promise<void> {
+export async function handle(arg: string): Promise<void> {
     const content = fs.readFileSync(arg).toString("utf-8");
     let obj: { [key: string]: any } = null;
     try {

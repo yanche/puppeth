@@ -5,10 +5,10 @@ import * as sendTx from "./actions/sendTx";
 import * as extractTx from "./actions/extractTx";
 
 const actionMap = new Map<string, (arg: string) => Promise<any>>();
-actionMap.set("createAcct", createAcct.process);
-actionMap.set("signTx", signTx.process);
-actionMap.set("sendTx", sendTx.process);
-actionMap.set("extractTx", extractTx.process);
+actionMap.set("createAcct", createAcct.handle);
+actionMap.set("signTx", signTx.handle);
+actionMap.set("sendTx", sendTx.handle);
+actionMap.set("extractTx", extractTx.handle);
 
 // node ./src/index.js createAcct {number}
 // node ./src/index.js sendTx {tag}
@@ -29,6 +29,9 @@ async function processAction() {
 processAction()
     .then(() => {
         console.info("done");
+        return 0;
     }, err => {
         console.error(err);
-    });
+        return 1;
+    })
+    .then(n => process.exit(n));

@@ -2,7 +2,7 @@
 import Web3 = require("web3");
 import * as config from "../config";
 
-export async function process(arg: string): Promise<void> {
+export async function handle(arg: string): Promise<void> {
     const num = Number(arg);
     if (!Number.isSafeInteger(num) || num <= 0) {
         throw new Error(`input must be an positive integer: ${arg}`);

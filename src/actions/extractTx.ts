@@ -1,7 +1,7 @@
 
 import * as config from "../config";
 
-export async function process(arg: string): Promise<void> {
+export async function handle(arg: string): Promise<void> {
     if (typeof arg !== "string" || !arg.trim().length) {
         throw new Error(`input as tag must be a non empty string: ${arg}`);
     }
