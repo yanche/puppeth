@@ -3,16 +3,14 @@ import * as createAcct from "./actions/createAcct";
 import * as signTx from "./actions/signTx";
 import * as sendTx from "./actions/sendTx";
 import * as extractTx from "./actions/extractTx";
+import * as syncBalance from "./actions/syncBalance";
 
 const actionMap = new Map<string, (arg: string) => Promise<any>>();
 actionMap.set("createAcct", createAcct.handle);
 actionMap.set("signTx", signTx.handle);
 actionMap.set("sendTx", sendTx.handle);
 actionMap.set("extractTx", extractTx.handle);
-
-// node ./src/index.js createAcct {number}
-// node ./src/index.js sendTx {tag}
-// node ./src/index.js signTx {path-to-json}
+actionMap.set("syncBalance", syncBalance.handle);
 
 async function processAction() {
     const actionType = process.argv[2];

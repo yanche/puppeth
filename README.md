@@ -11,6 +11,9 @@ Account and TX data will be stored in mongodb for future reference and query.
 - nodejs
 - typescript
 
+## Pre-build
+Fill the config file, in ./config/default.json
+
 ## Build
 ```sh
 $ npm install
@@ -41,8 +44,8 @@ $ node ./src/index.js sendTx {tag}
 ```
 #### Pipe mode, retrieve signed tx from stdin.
 ```sh
-$ echo "txdata" >./sendTx
-$ echo "txdata" > node ./src/index.js sendTx
+$ echo "txdata" | ./sendTx
+$ echo "txdata" | node ./src/index.js sendTx
 ```
 
 ### EXTRACT TX
@@ -50,4 +53,11 @@ Extract tx from mongodb by tag, output to stdout.
 ```sh
 $ ./extractTx {tag}
 $ node ./src/index.js extractTx {tag}
+```
+
+### Sync Account Balance
+Get account balance from network(by config) and save to mongodb.
+```sh
+$ ./syncBalance
+$ node ./src/index.js syncBalance
 ```
