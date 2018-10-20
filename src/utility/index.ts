@@ -22,6 +22,7 @@ export function shortenMsg(msg: string): string {
     return msg.length > 12 ? `${msg.slice(0, 6)}...${msg.slice(-6)}` : msg;
 }
 
+// @types/ethereum-tx currently does not have .hash as a method
 export function rawTxDataToHash(rawTx: string): string {
     return  "0x" + (<any>new Tx(rawTx)).hash().toString("hex");
 }

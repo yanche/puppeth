@@ -6,6 +6,11 @@ import * as oneToOne from "./oneToOne";
 import { preProcessInput } from "./util";
 
 export async function handle(arg: string): Promise<void> {
+    arg = arg.trim();
+    if (!arg.length) {
+        throw new Error(`must provide the path to action definition json.`)
+    }
+
     const content = fs.readFileSync(arg).toString("utf-8");
     let obj: { [key: string]: any } = null;
     try {

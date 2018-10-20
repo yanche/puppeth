@@ -17,7 +17,7 @@ async function createAccounts(number: number): Promise<void> {
 
     // ASSUME accounts in mongodb has consecutive index starts from 0
     const acctNum = await config.acctColl.count();
-    console.info(`now have ${acctNum} accounts, index starts from ${acctNum}`);
+    console.info(`had ${acctNum} accounts`);
 
     const web3 = new Web3();
     const arr = Array<config.Account>(number);
@@ -33,5 +33,5 @@ async function createAccounts(number: number): Promise<void> {
 
     await config.acctColl.bulkInsert(arr);
     const acctNum2 = await config.acctColl.count();
-    console.info(`now have ${acctNum2} accounts.`);
+    console.info(`now have ${acctNum2} accounts. new accounts' index starts from ${acctNum}`);
 }

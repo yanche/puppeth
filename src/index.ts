@@ -20,7 +20,7 @@ async function processAction() {
 
     const handler = actionMap.get(actionType);
     if (handler) {
-        await handler(actionArg);
+        await handler(actionArg || "");
     } else {
         throw new Error(`action not supported: ${actionType}`);
     }
@@ -30,7 +30,7 @@ processAction()
     .then(() => {
         return 0;
     }, err => {
-        console.error(err);
+        console.error("ERROR:", err.message);
         return 1;
     })
     .then(n => process.exit(n));

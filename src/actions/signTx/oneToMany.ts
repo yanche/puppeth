@@ -60,4 +60,6 @@ export async function signTx(options: InputType): Promise<void> {
     }));
 
     await config.txColl.bulkInsert(txArr);
+    
+    console.info(`signed & saved ${txArr.length} transactions into mongo with tag ${options.tag}`);
 }

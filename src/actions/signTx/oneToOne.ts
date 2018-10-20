@@ -53,4 +53,6 @@ export async function signTx(options: InputType): Promise<void> {
     });
 
     await config.txColl.createOne(tx);
+
+    console.info(`signed & saved 1 transactions into mongo with tag ${options.tag}`);
 }

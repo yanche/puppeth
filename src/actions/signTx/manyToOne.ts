@@ -45,4 +45,6 @@ export async function signTx(options: InputType): Promise<void> {
         // increase the nextNonce field of all related accounts
         { index: { $gte: options.senderStartIndex, $lt: options.senderStartIndex + options.senderNumber } },
         { $inc: { nextNonce: 1 } });
+
+    console.info(`signed & saved ${resultArr.length} transactions into mongo with tag ${options.tag}`);
 }
