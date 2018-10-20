@@ -1,3 +1,22 @@
+## Puppeth
+This is a tool to 
+- Create ethereum account/private key
+- Sign transaction offline
+- Send transaction using Infura
+
+Account and TX data will be stored in mongodb for future reference and query.
+
+## Prerequisite
+- mongodb
+- nodejs
+- typescript
+
+## Build
+```sh
+$ npm install
+$ tsc
+```
+
 ### CREATE ACCOUNTS (offline)
 Create ethereum accounts (private keys) using web3 api and store them in mongodb (highly suggest using an offline local db).
 ```sh
