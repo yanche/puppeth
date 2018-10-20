@@ -23,16 +23,7 @@ async function handleTTYMode(arg: string): Promise<void> {
     const txArr = await config.txColl.getAll({ tag: tag }, { _id: 1, txData: 1 });
     console.info(`found ${txArr.length} transactions with tag: ${tag}`);
 
-    const web3 = new Web3(config.web3Provider);
-    await roll(txArr, async tx => {
-        await delay(config.sendTxFreqMs);
-        const result = await sendSignedTransaction(web3, tx.txData);
-        if (result.success) {
-            // update db status
-            await config.txColl.updateAll({ _id: tx._id }, { $set: { txHash: result.hash } });
-            console.info(`update tx status in db with tx-hash: ${shortenMsg(tx.txData)}`);
-        }
-    }, 1);
+    await sendAllSignedTransactions(txArr.map(t => t.txData));
 }
 
 async function handlePipeMode(): Promise<void> {
@@ -49,6 +40,11 @@ async function handlePipeMode(): Promise<void> {
     }
     console.info("now start");
 
+    await sendAllSignedTransactions(txDataArr);
+}
+
+// promise never rejected
+async function sendAllSignedTransactions(txDataArr: string[]): Promise<void> {
     const web3 = new Web3(config.web3Provider);
     await roll(txDataArr, async txData => {
         await delay(config.sendTxFreqMs);
@@ -56,8 +52,8 @@ async function handlePipeMode(): Promise<void> {
     }, 1);
 }
 
-// promise never rejected, return true for success, false for failure
-function sendSignedTransaction(web3: Web3, txData: string): Promise<{ success: boolean; hash?: string }> {
+// promise never rejected
+function sendSignedTransaction(web3: Web3, txData: string): Promise<void> {
     return new Promise(res => {
         // for some reason without callback, sendSignedTransaction does not work (hang forever)
         web3.eth.sendSignedTransaction(txData, (err, result) => {
@@ -66,11 +62,10 @@ function sendSignedTransaction(web3: Web3, txData: string): Promise<{ success: b
                 console.error(`failed to send tx ${shortTxMsg}`);
                 // stack trace won't make any sense here
                 console.error(err.message);
-                res({ success: false });
             } else {
                 console.info(`done ${shortTxMsg}, hash: ${shortenMsg(result)}`);
-                res({ success: true, hash: result });
             }
+            res();
         });
     });
 }

@@ -1,5 +1,6 @@
 
 import * as mongo from "./mongo";
+import Tx = require("ethereumjs-tx");
 
 export { mongo };
 
@@ -19,4 +20,8 @@ export function getPipedString(): Promise<string> {
 // return first and last 6 char, concat with ...
 export function shortenMsg(msg: string): string {
     return msg.length > 12 ? `${msg.slice(0, 6)}...${msg.slice(-6)}` : msg;
+}
+
+export function rawTxDataToHash(rawTx: string): string {
+    return  "0x" + (<any>new Tx(rawTx)).hash().toString("hex");
 }

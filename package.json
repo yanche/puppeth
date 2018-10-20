@@ -19,10 +19,12 @@
   "dependencies": {
     "@belongs/asyncutil": "0.0.3",
     "@types/config": "0.0.34",
+    "@types/ethereumjs-tx": "^1.0.0",
     "@types/mongodb": "^3.1.12",
     "@types/node": "^10.11.7",
     "@types/web3": "^1.0.10",
     "config": "^2.0.1",
+    "ethereumjs-tx": "^1.3.7",
     "mongodb": "^3.1.8",
     "web3": "^1.0.0-beta.36"
   }

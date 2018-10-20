@@ -1,6 +1,7 @@
 
 import * as config from "../../config";
 import Web3 = require("web3");
+import { rawTxDataToHash } from "../../utility";
 
 type InputFieldType = "nonEmptyString" | "nonNegInt" | "posInt" | "ethValue" | "gasPrice" | "optionalNonNegInt";
 
@@ -149,5 +150,6 @@ export async function signTxOffline(options: {
         gas: gas,
         gasPrice: options.gasPrice,
         tag: options.tag,
+        txHash: rawTxDataToHash(tx.rawTransaction),
     };
 }
