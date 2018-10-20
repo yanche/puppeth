@@ -1,7 +1,8 @@
 
 import * as config from "../../config";
 import Web3 = require("web3");
-import { rawTxDataToHash } from "../../utility";
+import { rawTxDataToHash, hexToBuffer, bufferToHex } from "../../utility";
+import Tx = require("ethereumjs-tx");
 
 type InputFieldType = "nonEmptyString" | "nonNegInt" | "posInt" | "ethValue" | "gasPrice" | "optionalNonNegInt";
 
@@ -122,7 +123,7 @@ export async function getAddressListOrThrow(startIndex: number, count: number): 
 }
 
 // NO input validation
-export async function signTxOffline(options: {
+export function signTxOffline(options: {
     privateKey: string;
     nonce: number;
     address: string;
@@ -130,19 +131,21 @@ export async function signTxOffline(options: {
     gas?: number;
     gasPrice: number;
     tag: string;
-}): Promise<config.Transaction> {
+}): config.Transaction {
     const gas = options.gas || config.sendEtherGasCost;
     const web3 = new Web3();
-    const tx = await web3.eth.accounts.signTransaction({
+    const tx = new Tx({
         nonce: options.nonce,
         to: options.address,
         value: options.value,
-        gas: gas,
+        gasLimit: gas,
         gasPrice: options.gasPrice,
         chainId: config.chainId,
-    }, options.privateKey);
+    });
+    tx.sign(hexToBuffer(options.privateKey));
+
     return {
-        txData: tx.rawTransaction,
+        txData: bufferToHex(tx.serialize()),
         from: web3.eth.accounts.privateKeyToAccount(options.privateKey).address,
         nonce: options.nonce,
         to: options.address,
@@ -150,6 +153,6 @@ export async function signTxOffline(options: {
         gas: gas,
         gasPrice: options.gasPrice,
         tag: options.tag,
-        txHash: rawTxDataToHash(tx.rawTransaction),
+        txHash: bufferToHex((<any>tx).hash()),
     };
 }

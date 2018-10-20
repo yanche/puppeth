@@ -24,5 +24,17 @@ export function shortenMsg(msg: string): string {
 
 // @types/ethereum-tx currently does not have .hash as a method
 export function rawTxDataToHash(rawTx: string): string {
-    return  "0x" + (<any>new Tx(rawTx)).hash().toString("hex");
+    return "0x" + (<any>new Tx(rawTx)).hash().toString("hex");
+}
+
+export function hexToBuffer(hex: string): Buffer {
+    if (hex.length % 2) {
+        throw new Error(`hex string length must be even number: ${hex}, ${hex.length}`);
+    }
+
+    return Buffer.from(hex.startsWith("0x") ? hex.slice(2) : hex, "hex");
+}
+
+export function bufferToHex(buf: Buffer): string {
+    return "0x" + buf.toString("hex");
 }

@@ -43,7 +43,7 @@ export async function signTx(options: InputType): Promise<void> {
 
     const nonce = offlineMode ? options.nonce : await web3.eth.getTransactionCount(senderAddress);
     // this shall be synchronous call
-    const tx = await signTxOffline({
+    const tx = signTxOffline({
         nonce: nonce,
         address: options.recipientAddress,
         value: options.value,

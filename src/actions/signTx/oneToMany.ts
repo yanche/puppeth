@@ -47,7 +47,7 @@ export async function signTx(options: InputType): Promise<void> {
 
     const nonceStart = offlineMode ? options.nonceStart : await web3.eth.getTransactionCount(senderAddress);
 
-    const txArr = await Promise.all(recipientAccounts.map((account, index) => {
+    const txArr = recipientAccounts.map((account, index) => {
         // this shall be synchronous call
         return signTxOffline({
             privateKey: options.privateKey,
@@ -57,7 +57,7 @@ export async function signTx(options: InputType): Promise<void> {
             gasPrice: options.gasPrice,
             tag: options.tag,
         });
-    }));
+    });
 
     await config.txColl.bulkInsert(txArr);
     

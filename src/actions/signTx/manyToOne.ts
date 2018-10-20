@@ -28,7 +28,7 @@ export async function signTx(options: InputType): Promise<void> {
 
     const senderAccounts = (await getAddressListOrThrow(options.senderStartIndex, options.senderNumber)).map((acct, i) => ({ acct: acct, index: i }));
 
-    const resultArr = await Promise.all(senderAccounts.map(entry => {
+    const resultArr = senderAccounts.map(entry => {
         // synchronous signing
         return signTxOffline({
             privateKey: entry.acct.privateKey,
@@ -38,7 +38,7 @@ export async function signTx(options: InputType): Promise<void> {
             gasPrice: options.gasPrice,
             tag: options.tag,
         });
-    }));
+    });
 
     await config.txColl.bulkInsert(resultArr);
     await config.acctColl.updateAll(
