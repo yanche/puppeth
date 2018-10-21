@@ -27,7 +27,11 @@ async function syncTransactions(txArr: config.Transaction[], saveDb: boolean): P
     await roll(txArr, async tx => {
         try {
             const txInChain = await web3.eth.getTransaction(tx.txHash);
-            if (!txInChain.blockHash) {
+            if (!txInChain) {
+                // unknown
+                console.error(`${tx.txHash}: not found`);
+                saveDb && await config.txColl.updateAll({ _id: tx._id }, { $set: { status: config.TxStatus.unknown } });
+            } else if (!txInChain.blockHash || !txInChain.blockNumber) {
                 // pending transaction
                 console.info(`${tx.txHash}: pending`);
                 saveDb && await config.txColl.updateAll({ _id: tx._id }, { $set: { status: config.TxStatus.pending } });
@@ -38,9 +42,7 @@ async function syncTransactions(txArr: config.Transaction[], saveDb: boolean): P
             }
         }
         catch (err) {
-            // unknown
-            console.error(`error when sync ${tx.txHash}: ${err.message}`);
-            saveDb && await config.txColl.updateAll({ _id: tx._id }, { $set: { status: config.TxStatus.unknown } });
+            console.error(`error when sync-ing ${tx.txHash}`, err.message);
         }
     }, Math.min(10, txArr.length));
 }

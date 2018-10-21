@@ -1,6 +1,6 @@
 {
     "signTxToNetwork": "ropsten",
-    "web3Provider": "https://ropsten.infura.io",
+    "web3Provider": "https://api.myetherwallet.com/rop",
     "mongoUrl": "mongodb://127.0.0.1:27017/puppeth?w=majority",
     "sendTxFreqMs": 1000
 }

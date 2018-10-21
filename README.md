@@ -2,7 +2,7 @@
 This is a tool to 
 - Create ethereum account/private key
 - Sign transaction offline
-- Send transaction using Infura
+- Send transaction
 
 Account and TX data will be stored in mongodb for future reference and query.
 
@@ -13,6 +13,9 @@ Account and TX data will be stored in mongodb for future reference and query.
 
 ## Pre-build
 Fill the config file, in ./config/default.json
+Known free public ETH endpoint
+- https://api.myetherwallet.com/rop & https://api.myetherwallet.com/eth
+- https://ropsten.infura.io && https://mainnet.infura.io/
 
 ## Build
 ```sh
@@ -36,7 +39,7 @@ $ node ./src/index.js signTx {path-to-json}
 ```
 
 ### SEND TX
-Send signed tx to public network using infura.
+Send signed tx to public network.
 #### TTY mode, retrieve signed tx from mongodb by provided tag.
 ```sh
 $ sendTx {tag}
