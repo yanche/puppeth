@@ -62,10 +62,10 @@ export const mongo = {
     }
 };
 
-const infuraKey = config.get<string>("infuraKey");
-export const ethNetwork = config.get<string>("ethNetwork");
+export const web3Provider = config.get<string>("web3Provider");
+export const signTxToNetwork = config.get<string>("signTxToNetwork");
 let _chainId = 0;
-switch (ethNetwork) {
+switch (signTxToNetwork) {
     case "mainnet": {
         _chainId = 1;
         break;
@@ -75,10 +75,9 @@ switch (ethNetwork) {
         break;
     }
     default:
-        throw new Error(`unknown ETH network: ${ethNetwork}, valid values: mainnet, ropsten`);
+        throw new Error(`unknown ETH network: ${signTxToNetwork}, valid values: mainnet, ropsten`);
 }
 
-export const web3Provider: string = `https://${ethNetwork}.infura.io/v3/${infuraKey}`;
 export const chainId = _chainId;
 export const sendTxFreqMs = config.get<number>("sendTxFreqMs");
 

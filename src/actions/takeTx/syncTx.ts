@@ -16,7 +16,7 @@ export async function handle(arg: string): Promise<void> {
     }
 
     if (count > 0) {
-        console.info(`now start sync-ing, NETWORK: ${config.ethNetwork}`);
+        console.info(`now start sync-ing, NETWORK: ${config.signTxToNetwork}`);
         await syncTransactions(input.txArr, !input.piped);
     }
 }

@@ -1,6 +1,6 @@
 {
-    "ethNetwork": "ropsten",
-    "infuraKey": "",
+    "signTxToNetwork": "ropsten",
+    "web3Provider": "https://ropsten.infura.io",
     "mongoUrl": "mongodb://127.0.0.1:27017/puppeth?w=majority",
     "sendTxFreqMs": 1000
 }
