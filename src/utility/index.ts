@@ -22,6 +22,15 @@ export function shortenMsg(msg: string): string {
     return msg.length > 12 ? `${msg.slice(0, 6)}...${msg.slice(-6)}` : msg;
 }
 
+export function logHeadTailShortMsg(msgs: string[]): void {
+    if (msgs.length === 1) {
+        console.info(shortenMsg(msgs[0]));
+    } else if (msgs.length > 1) {
+        console.info(`first: ${shortenMsg(msgs[0])}`);
+        console.info(`last: ${shortenMsg(msgs[msgs.length - 1])}`);
+    }
+}
+
 // @types/ethereum-tx currently does not have .hash as a method
 export function rawTxDataToHash(rawTx: string): string {
     return "0x" + (<any>new Tx(rawTx)).hash().toString("hex");

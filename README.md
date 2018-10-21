@@ -37,7 +37,7 @@ $ node ./src/index.js signTx {path-to-json}
 
 ### SEND TX
 Send signed tx to public network using infura.
-#### TTY mode, retrieve signed tx from mongodb by provided tag
+#### TTY mode, retrieve signed tx from mongodb by provided tag.
 ```sh
 $ sendTx {tag}
 $ node ./src/index.js sendTx {tag}
@@ -60,4 +60,17 @@ Get account balance from network(by config) and save to mongodb.
 ```sh
 $ ./syncBalance
 $ node ./src/index.js syncBalance
+```
+
+### SYNC TX
+Sync tx status from public network(by config)
+#### TTY mode, retrieve tx hash from mongodb by provided tag.
+```sh
+$ syncTx {tag}
+$ node ./src/index.js syncTx {tag}
+```
+#### Pipe mode, retrieve tx hash from stdin.
+```sh
+$ echo "txhash" | ./syncTx
+$ echo "txhash" | node ./src/index.js syncTx
 ```

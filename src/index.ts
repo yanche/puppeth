@@ -1,7 +1,8 @@
 
 import * as createAcct from "./actions/createAcct";
 import * as signTx from "./actions/signTx";
-import * as sendTx from "./actions/sendTx";
+import * as sendTx from "./actions/takeTx/sendTx";
+import * as syncTx from "./actions/takeTx/syncTx";
 import * as extractTx from "./actions/extractTx";
 import * as syncBalance from "./actions/syncBalance";
 
@@ -11,6 +12,7 @@ actionMap.set("signTx", signTx.handle);
 actionMap.set("sendTx", sendTx.handle);
 actionMap.set("extractTx", extractTx.handle);
 actionMap.set("syncBalance", syncBalance.handle);
+actionMap.set("syncTx", syncTx.handle);
 
 async function processAction() {
     const actionType = process.argv[2];

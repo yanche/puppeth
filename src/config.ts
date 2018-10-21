@@ -24,6 +24,9 @@ export interface Transaction {
     gasPrice?: number;
     nonce?: number;
     txHash?: string;
+    status?: TxStatus;
+    blockHash?: string;
+    blockNumber?: number;
 }
 
 export const mongo = {
@@ -51,13 +54,16 @@ export const mongo = {
                 gasPrice: 1,
                 nonce: 1,
                 txHash: 1,
+                status: 1,
+                blockHash: 1,
+                blockNumber: 1,
             }
         },
     }
 };
 
 const infuraKey = config.get<string>("infuraKey");
-const ethNetwork = config.get<string>("ethNetwork");
+export const ethNetwork = config.get<string>("ethNetwork");
 let _chainId = 0;
 switch (ethNetwork) {
     case "mainnet": {
@@ -84,3 +90,9 @@ const mongoUrl = config.get<string>("mongoUrl");
 const db = new utility.mongo.DbClient(mongoUrl);
 export const txColl = db.getCollClient<Transaction>(mongo.collections.transactions.name, mongo.collections.transactions.fields);
 export const acctColl = db.getCollClient<Account>(mongo.collections.accounts.name, mongo.collections.accounts.fields);
+
+export enum TxStatus {
+    pending = "pending",
+    complete = "complete",
+    unknown = "unknown",
+}

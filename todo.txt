@@ -4,8 +4,8 @@
 
 # sendtx, from file
 
-check tx status, from db/file
+# check tx status, from db/file
 
-check account status, from db
+# check account status, from db
 
 signtx with data (to contract)

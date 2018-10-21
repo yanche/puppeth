@@ -154,5 +154,6 @@ export function signTxOffline(options: {
         gasPrice: options.gasPrice,
         tag: options.tag,
         txHash: bufferToHex((<any>tx).hash()),
+        status: config.TxStatus.unknown,
     };
 }
