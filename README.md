@@ -12,10 +12,9 @@ Account and TX data will be stored in mongodb for future reference and query.
 - typescript
 
 ## Pre-build
-Fill the config file, in ./config/default.json
-Known free public ETH endpoint
+Fill the config file, in ./config/default.json, several known free public ETH endpoint
 - https://api.myetherwallet.com/rop & https://api.myetherwallet.com/eth
-- https://ropsten.infura.io && https://mainnet.infura.io/
+- https://ropsten.infura.io & https://mainnet.infura.io/
 
 ## Build
 ```sh
