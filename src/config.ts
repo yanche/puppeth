@@ -7,6 +7,7 @@ import { ObjectID } from "mongodb";
 export interface Account {
     _id?: ObjectID;
     index?: number;
+    mwords?: string;
     privateKey?: string;
     address?: string;
     nextNonce?: number;
@@ -36,6 +37,7 @@ export const mongo = {
             fields: {
                 _id: 1,
                 index: 1,
+                mwords: 1,
                 privateKey: 1,
                 address: 1,
                 nextNonce: 1,
